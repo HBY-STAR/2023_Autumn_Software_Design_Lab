@@ -2,12 +2,11 @@ package org.example.receiver;
 
 import lombok.Data;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Data
 public class Document {
-    public static List<String> doc_lines = new ArrayList<>();
+    public static List<List<String>> doc_lines = new ArrayList<>();
     public static String file_path = null;
 
     public void load(String filePath) {
@@ -53,7 +52,8 @@ public class Document {
             String s;
             // 使用readLine方法，一次读一行
             while((s = br.readLine())!=null){
-                doc_lines.add(s);
+                List<String> add = getListStrings(s);
+                doc_lines.add(add);
             }
             br.close();
         }catch(Exception e){
@@ -69,8 +69,11 @@ public class Document {
             }
             BufferedWriter bw = new BufferedWriter(new FileWriter(file_path));
             StringBuilder strBd = new StringBuilder();
-            for(String docLine : doc_lines){
-                strBd.append(docLine).append('\n');
+            for(List<String> docLine : doc_lines){
+                for (String docElement: docLine){
+                    strBd.append(docElement).append(" ");
+                }
+                strBd.append("\n");
             }
             bw.write(strBd.toString());
             bw.flush();
@@ -81,7 +84,7 @@ public class Document {
         }
     }
 
-    public void insert(int row, String text) {
+    public void insert(int row, List<String> text) {
         try{
             if(file_path == null){
                 System.out.println("暂未加载任何文件！");
@@ -96,7 +99,7 @@ public class Document {
                 }
                 else {
                     for(int i=0;i<row-1-doc_lines.size();i++){
-                        doc_lines.add("");
+                        doc_lines.add(getListStrings(""));
                     }
                     doc_lines.add(doc_lines.size(),text);
                 }
@@ -112,8 +115,12 @@ public class Document {
             if(file_path == null){
                 System.out.println("暂未加载任何文件！");
             }else {
-                for (String docLine : doc_lines) {
-                    System.out.println(docLine);
+                for (List<String> docLine : doc_lines) {
+                    for (String docElement : docLine){
+                        System.out.print(docElement);
+                        System.out.print(" ");
+                    }
+                    System.out.print("\n");
                 }
             }
         }catch (Exception e){
@@ -135,13 +142,35 @@ public class Document {
 
         }
     }
-    public void delete_text(String text) {
+    public void delete_text(List<String> text) {
         if(text==null){
             System.out.println("指定的字符串为空");
         }else{
-            if(!doc_lines.removeIf(docLine -> docLine.equals(text))){
+            int flag=0;
+            for (int i=0;i<doc_lines.size();i++){
+               for (int j=1;j<doc_lines.get(i).size();j++){
+                   if(doc_lines.get(i).get(j).equals(text.get(0))){
+                       doc_lines.remove(doc_lines.get(i));
+                       flag++;
+                   }
+               }
+            }
+            if(flag==0){
                 System.out.println("未查找到指定字符串");
             }
+            else{
+                System.out.println("共删除 "+flag+" 条语句");
+            }
         }
+    }
+
+
+    private static List<String> getListStrings(String s) {
+        List<String> add = new ArrayList<>();
+        Scanner line_scanner = new Scanner(s);
+        while (line_scanner.hasNext()){
+            add.add(line_scanner.next());
+        }
+        return add;
     }
 }
