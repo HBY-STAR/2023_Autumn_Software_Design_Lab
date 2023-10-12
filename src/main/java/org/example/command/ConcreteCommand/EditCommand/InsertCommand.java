@@ -4,7 +4,6 @@ import org.example.command.Command;
 import org.example.receiver.Document;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class InsertCommand implements Command {
     private int row;
@@ -25,13 +24,7 @@ public class InsertCommand implements Command {
             }
         }catch(NumberFormatException e)
         {
-            int count_line=0;
-            Scanner scanner = new Scanner(text_builder.toString());
-            while (scanner.hasNextLine()){
-                count_line++;
-                scanner.nextLine();
-            }
-            row=count_line+1;
+            row = Document.doc_lines.size()+1;
             for (String cmdArg : cmd_args) {
                 text_builder.append(cmdArg).append(" ");
             }
@@ -39,7 +32,7 @@ public class InsertCommand implements Command {
         }
     }
         @Override
-    public void execute(){
+        public void execute(){
         if(text!=null) {
             document.insert(row, text);
         }

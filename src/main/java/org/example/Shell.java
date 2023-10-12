@@ -1,9 +1,7 @@
 package org.example;
 
 import org.example.command.Command;
-import org.example.command.ConcreteCommand.EditCommand.DeleteCommand;
-import org.example.command.ConcreteCommand.EditCommand.InsertCommand;
-import org.example.command.ConcreteCommand.EditCommand.NothingCommand;
+import org.example.command.ConcreteCommand.EditCommand.*;
 import org.example.command.ConcreteCommand.ShowCommand.HelpCommand;
 import org.example.command.ConcreteCommand.FileCommand.LoadCommand;
 import org.example.command.ConcreteCommand.FileCommand.SaveCommand;
@@ -51,12 +49,26 @@ public class Shell {
                             System.out.println(cmd+"参数不能为空");
                         }
                     }
-                    case "save" -> {
-                        command = new SaveCommand(document);
-                    }
+                    case "save" -> command = new SaveCommand(document);
                     case "insert" -> {
                         if(cmd_args.size()>0){
                             command = new InsertCommand(cmd_args,document);
+                        }else {
+                            command = new NothingCommand();
+                            System.out.println(cmd+"参数不能为空");
+                        }
+                    }
+                    case "append-head" -> {
+                        if(cmd_args.size()>0){
+                            command = new AppendHeadCommand(cmd_args,document);
+                        }else {
+                            command = new NothingCommand();
+                            System.out.println(cmd+"参数不能为空");
+                        }
+                    }
+                    case "append-tail" -> {
+                        if(cmd_args.size()>0){
+                            command = new AppendTailCommand(cmd_args,document);
                         }else {
                             command = new NothingCommand();
                             System.out.println(cmd+"参数不能为空");
@@ -70,10 +82,9 @@ public class Shell {
                             System.out.println(cmd+"参数不能为空");
                         }
                     }
-                    case "list" -> {
-                        command = new ListCommand(document);
-                    }
+                    case "list" -> command = new ListCommand(document);
                     default -> {
+                        System.out.println(cmd+" 不是有效命令");
                         command = new HelpCommand();
                     }
                 }
