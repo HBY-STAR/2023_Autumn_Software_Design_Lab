@@ -4,7 +4,8 @@ import org.example.command.Command;
 
 public class NothingCommand implements Command {
     @Override
-    public void execute(){
+    public boolean execute(){
         //Nothing
+        return false;
     }
 }

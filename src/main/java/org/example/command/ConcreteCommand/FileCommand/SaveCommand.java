@@ -10,7 +10,7 @@ public class SaveCommand implements Command {
     }
 
     @Override
-    public void execute(){
-        document.save();
+    public boolean execute(){
+        return document.save();
     }
 }

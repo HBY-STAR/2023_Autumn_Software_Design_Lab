@@ -7,7 +7,7 @@ public class Invoker {
     public void setCommand(Command cmd){
         this.cmd=cmd;
     }
-    public void execCommand() {
-        cmd.execute();
+    public boolean execCommand() {
+        return cmd.execute();
     }
 }

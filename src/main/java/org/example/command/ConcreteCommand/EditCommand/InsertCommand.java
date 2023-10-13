@@ -28,9 +28,11 @@ public class InsertCommand implements Command {
         }
     }
         @Override
-        public void execute(){
+        public boolean execute(){
         if(text!=null) {
-            document.insert(row, text);
+            return document.insert(row, text);
+        }else {
+            return false;
         }
     }
 }

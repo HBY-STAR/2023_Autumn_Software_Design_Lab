@@ -17,7 +17,7 @@ public class AppendTailCommand implements Command {
         text = cmd_args;
     }
     @Override
-    public void execute() {
-        document.insert(row, text);
+    public boolean execute() {
+        return document.insert(row, text);
     }
 }

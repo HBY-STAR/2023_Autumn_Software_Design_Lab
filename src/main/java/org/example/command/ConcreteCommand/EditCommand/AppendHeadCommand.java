@@ -15,7 +15,7 @@ public class AppendHeadCommand implements Command {
         text = cmd_args;
     }
     @Override
-    public void execute(){
-            document.insert(1, text);
+    public boolean execute(){
+            return document.insert(1, text);
         }
 }

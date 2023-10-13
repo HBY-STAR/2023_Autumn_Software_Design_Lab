@@ -10,7 +10,7 @@ public class ListCommand implements Command {
         this.document=document;
     }
     @Override
-    public void execute(){
-        document.list();
+    public boolean execute(){
+        return document.list();
     }
 }

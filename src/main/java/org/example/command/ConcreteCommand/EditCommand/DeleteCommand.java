@@ -27,11 +27,11 @@ public class DeleteCommand implements Command {
         }
     }
     @Override
-    public void execute(){
+    public boolean execute(){
         if(use_row){
-            document.delete_row(row);
+            return document.delete_row(row);
         }else{
-            document.delete_text(text);
+            return document.delete_text(text);
         }
     }
 }

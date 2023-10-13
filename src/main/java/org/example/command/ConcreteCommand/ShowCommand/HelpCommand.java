@@ -4,7 +4,7 @@ import org.example.command.Command;
 
 public class HelpCommand implements Command {
     @Override
-    public void execute(){
+    public boolean execute(){
         System.out.println("|-----------HELP-----------|");
         System.out.println("|  load  ⽂件路径            |");
         System.out.println("|  save                    |");
@@ -21,5 +21,6 @@ public class HelpCommand implements Command {
         System.out.println("|  history [数量]           |");
         System.out.println("|  stats [all | current]   |");
         System.out.println("|-----------END------------|");
+        return true;
     }
 }

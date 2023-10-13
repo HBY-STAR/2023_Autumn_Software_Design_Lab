@@ -9,7 +9,7 @@ public class LoadCommand implements Command {
     private Document document;
     public LoadCommand(List<String> cmd_args,Document document){
         if(cmd_args.size()>1){
-            System.out.println("仅支持打开单个文件");
+            System.out.println("一次仅支持打开单个文件");
         } else{
             this.file_path=cmd_args.get(0);
             this.document=document;
@@ -17,7 +17,7 @@ public class LoadCommand implements Command {
 
     }
     @Override
-    public void execute(){
-        document.load(file_path);
+    public boolean execute(){
+        return document.load(file_path);
     }
 }

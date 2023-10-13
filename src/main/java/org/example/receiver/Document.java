@@ -9,13 +9,15 @@ public class Document {
     public static List<List<String>> doc_lines = new ArrayList<>();
     public static String file_path = null;
 
-    public void load(String filePath) {
+    public boolean load(String filePath) {
         try{
             File check_file= new File(filePath);
             //检测是否已加载文件
             if(file_path != null){
-                System.out.println("文件: "+file_path+" 已加载，请退出后重新进入以加载其他文件");
-                return;
+                System.out.println("文件: "+file_path+" 已关闭，开始加载新文件...");
+                file_path=null;
+                doc_lines=new ArrayList<>();
+                return load(filePath);
             }
             //检测文件是否存在
             if(check_file.exists()){
@@ -30,12 +32,12 @@ public class Document {
                         System.exit(-1);
                     }
                     file_path=check_file.getAbsolutePath();
-                    return;
+                    return true;
                 }
                 //若父路径不为空但不为目录
                 else if(!check_file.getParentFile().isDirectory()){
                     System.out.println("路径: "+check_file.getParent()+" 不存在");
-                    return;
+                    return false;
                 }
                 //父路径正常
                 else {
@@ -44,7 +46,7 @@ public class Document {
                         System.exit(-1);
                     }
                     file_path=check_file.getAbsolutePath();
-                    return;
+                    return true;
                 }
             }
             // 构造一个BufferedReader类来读取文件
@@ -56,16 +58,18 @@ public class Document {
                 doc_lines.add(add);
             }
             br.close();
+            return true;
         }catch(Exception e){
             e.printStackTrace();
         }
+        return false;
     }
 
-    public  void save(){
+    public boolean save(){
         try{
             if(file_path == null){
                 System.out.println("暂未加载任何文件！");
-                return;
+                return false;
             }
             BufferedWriter bw = new BufferedWriter(new FileWriter(file_path));
             StringBuilder strBd = new StringBuilder();
@@ -79,19 +83,22 @@ public class Document {
             bw.flush();
             bw.close();
             System.out.println("保存成功！");
+            return true;
         }catch(Exception e){
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void insert(int row, List<String> text) {
+    public boolean insert(int row, List<String> text) {
         try{
             if(file_path == null){
                 System.out.println("暂未加载任何文件！");
-                return;
+                return false;
             }
             if(row<=0){
                 System.out.println("若指定行号，则行号应为一个自然数");
+                return false;
             }
             else {
                 if(row-1<=doc_lines.size()){
@@ -103,14 +110,15 @@ public class Document {
                     }
                     doc_lines.add(doc_lines.size(),text);
                 }
-
+                return true;
             }
         }catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void list() {
+    public boolean list() {
         try{
             if(file_path == null){
                 System.out.println("暂未加载任何文件！");
@@ -123,28 +131,33 @@ public class Document {
                     System.out.print("\n");
                 }
             }
+            return true;
         }catch (Exception e){
             e.printStackTrace();
         }
+        return false;
     }
 
-    public void delete_row(int row) {
+    public boolean delete_row(int row) {
         if(row<=0){
             System.out.println("若指定行号，则行号应为一个自然数");
+            return false;
         }
         else {
             if(row-1<=doc_lines.size()){
                 doc_lines.remove(row-1);
+                return true;
             }
             else {
                 System.out.println("行号超出文件范围");
+                return false;
             }
-
         }
     }
-    public void delete_text(List<String> text) {
-        if(text==null){
+    public boolean delete_text(List<String> text) {
+        if(text.size()==0){
             System.out.println("指定的字符串为空");
+            return false;
         }else{
             int flag=0;
             for (int i=0;i<doc_lines.size();i++){
@@ -157,9 +170,11 @@ public class Document {
             }
             if(flag==0){
                 System.out.println("未查找到指定字符串");
+                return false;
             }
             else{
                 System.out.println("共删除 "+flag+" 条语句");
+                return true;
             }
         }
     }
