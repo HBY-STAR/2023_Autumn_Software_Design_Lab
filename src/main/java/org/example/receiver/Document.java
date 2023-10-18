@@ -101,6 +101,18 @@ public class Document {
                 return false;
             }
             else {
+                //检查格式
+                if(text.size()!=2){
+                    System.out.println("插入格式错误");
+                    return false;
+                }
+                String check = text.get(0);
+                if(!check.equals("#")&&!check.equals("##")&&!check.equals("###")&&!check.equals("####")&&
+                        !check.equals("#####")&&!check.equals("######")&&!check.equals("*")&&!check.endsWith(".")){
+                    System.out.println("插入格式错误");
+                    return false;
+                }
+
                 if(row-1<=doc_lines.size()){
                     doc_lines.add(row-1,text);
                 }
@@ -161,11 +173,9 @@ public class Document {
         }else{
             int flag=0;
             for (int i=0;i<doc_lines.size();i++){
-               for (int j=1;j<doc_lines.get(i).size();j++){
-                   if(doc_lines.get(i).get(j).equals(text.get(0))){
-                       doc_lines.remove(doc_lines.get(i));
-                       flag++;
-                   }
+               if(doc_lines.get(i).get(1).equals(text.get(0))){
+                   doc_lines.remove(doc_lines.get(i));
+                   flag++;
                }
             }
             if(flag==0){
@@ -188,4 +198,151 @@ public class Document {
         }
         return add;
     }
+
+    public boolean dir_tree(List<String> text){
+        if(text.size()==0){
+            list_tree(0,0,-1);
+            return true;
+        }else{
+            int find=-1;
+            for (int i=0;i<doc_lines.size();i++){
+                if(doc_lines.get(i).get(1).equals(text.get(0))){
+                    find=i;
+                }
+            }
+            if(find==-1){
+                System.out.println("未查找到指定字符串");
+                return false;
+            }else {
+                int cur_dept = getCurDept(doc_lines.get(find).get(0));
+                list_tree_block(cur_dept,find,0);
+            }
+        }
+        return true;
+    }
+
+    public boolean list_tree(int depth,int doc_index,int print_depth) {
+        //循环遍历
+        int cur_dept;
+        int cur_index = doc_index;
+        do{
+            List<String> cur_line;
+            if(doc_lines.size()>cur_index){
+                cur_line = doc_lines.get(cur_index);
+            }else {
+                return true;
+            }
+
+            String head;
+
+            //跳过空白行
+            if(cur_line.equals(getListStrings(""))){
+                cur_index++;
+                continue;
+            }
+
+            //格式检查
+            if(cur_line.size()==2){
+                head = cur_line.get(0);
+            } else {
+                System.out.println("文件中存在格式错误，执行失败");
+                return false;
+            }
+
+            cur_dept = getCurDept(head);
+
+            if(cur_dept==depth){//处理好相同标题
+                int next = list_tree_block(cur_dept,cur_index,print_depth);
+                list_tree(cur_dept,next,print_depth);
+                break;
+            }else if(cur_dept>depth){
+                cur_index= list_tree_block(cur_dept,cur_index,print_depth+1);
+            }else {
+                cur_index= list_tree_block(cur_dept,cur_index,cur_dept);
+            }
+        }while (doc_lines.size()>cur_index&&cur_index>0);
+        return true;
+    }
+
+    private static int getCurDept(String head) {
+        int cur_dept;
+        switch (head) {
+            case "#" -> cur_dept = 1;
+            case "##" -> cur_dept = 2;
+            case "###" -> cur_dept = 3;
+            case "####" -> cur_dept = 4;
+            case "#####" -> cur_dept = 5;
+            case "######" -> cur_dept = 6;
+            default -> cur_dept = 7;
+        }
+        return cur_dept;
+    }
+
+    public int list_tree_block(int depth,int doc_index,int print_depth) {
+        //循环遍历下级项
+        boolean is_first=true;
+        int cur_dept;
+        int cur_index = doc_index;
+        do{
+            List<String> cur_line;
+            if(doc_lines.size()>cur_index){
+                cur_line = doc_lines.get(cur_index);
+            }else {
+                return -1;
+            }
+
+            String head;
+            String content;
+
+            //跳过空白行
+            if(cur_line.equals(getListStrings(""))){
+                cur_index++;
+                continue;
+            }
+
+            if(cur_line.size()==2){
+                head = cur_line.get(0);
+                content = cur_line.get(1);
+            } else{
+                System.out.println("文件中存在格式错误，执行失败");
+                return -1;
+            }
+
+            cur_dept = getCurDept(head);
+
+            if(cur_dept==7) {
+                for(int i=0;i<print_depth+1;i++){
+                    System.out.print("\t\t");
+                }
+                System.out.print(" |------");
+                if(head.equals("*")){
+                    System.out.println(" * "+content);
+                }
+                else{
+                    System.out.println(head+ " "+content);
+                }
+                cur_index++;
+            }else{
+                if(cur_dept==depth&&is_first){
+                    for(int i=0;i<print_depth;i++){
+                        System.out.print("\t\t");
+                    }
+                    System.out.println(" |------ "+content);
+                    is_first=false;
+                    cur_index=list_tree_block(cur_dept,cur_index+1,print_depth);
+                }else if(cur_dept>depth){
+                    for(int i=0;i<print_depth+1;i++){
+                        System.out.print("\t\t");
+                    }
+                    System.out.println(" |------ "+content);
+                    is_first=false;
+                    cur_index= list_tree_block(cur_dept,cur_index+1,print_depth+1);
+                }else {
+                    return cur_index;
+                }
+            }
+        }while (doc_lines.size()>cur_index&&cur_index>0);
+        return 0;
+    }
+
 }

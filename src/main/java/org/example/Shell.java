@@ -3,10 +3,12 @@ package org.example;
 import org.example.command.Command;
 import org.example.command.ConcreteCommand.EditCommand.*;
 import org.example.command.ConcreteCommand.LogCommand.HistoryCommand;
+import org.example.command.ConcreteCommand.ShowCommand.DirTreeCommand;
 import org.example.command.ConcreteCommand.ShowCommand.HelpCommand;
 import org.example.command.ConcreteCommand.FileCommand.LoadCommand;
 import org.example.command.ConcreteCommand.FileCommand.SaveCommand;
 import org.example.command.ConcreteCommand.ShowCommand.ListCommand;
+import org.example.command.ConcreteCommand.ShowCommand.ListTreeCommand;
 import org.example.command.ConcreteCommand.StatsCommand.StatsCommand;
 import org.example.invoker.Invoker;
 import org.example.receiver.Document;
@@ -123,6 +125,8 @@ public class Shell {
                 }
             }
             case "list" -> command = new ListCommand(document);
+            case "list-tree" -> command = new ListTreeCommand(document);
+            case "dir-tree" -> command = new DirTreeCommand(cmd_args,document);
             case "history" -> command = new HistoryCommand(cmd_args, historyLog);
             case "stats" -> command = new StatsCommand(cmd_args, statsLog);
             default -> {
