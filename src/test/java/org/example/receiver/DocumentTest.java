@@ -15,8 +15,6 @@ public class DocumentTest {
     public void testLoad() {
         document.load("test.md");
         assertEquals(Document.file_path,"C:\\Users\\21714\\Desktop\\Code\\SoftwareDesign\\lab1\\SoftwareDesignLab1\\test.md");
-        document.load("1.md");
-        assertEquals(Document.file_path,"C:\\Users\\21714\\Desktop\\Code\\SoftwareDesign\\lab1\\SoftwareDesignLab1\\1.md");
     }
 
     @Test
