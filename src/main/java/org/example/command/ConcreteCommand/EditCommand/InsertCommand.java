@@ -9,7 +9,7 @@ import java.util.List;
 public class InsertCommand implements Command {
     private int row;
     private List<String> text =new ArrayList<>();
-    private Document document;
+    private final Document document;
 
     public InsertCommand(List<String> cmd_args, Document document) {
         this.document=document;
@@ -29,10 +29,6 @@ public class InsertCommand implements Command {
     }
         @Override
         public boolean execute(){
-        if(text!=null) {
             return document.insert(row, text);
-        }else {
-            return false;
-        }
     }
 }

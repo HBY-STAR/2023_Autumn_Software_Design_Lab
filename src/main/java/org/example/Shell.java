@@ -124,6 +124,8 @@ public class Shell {
                     System.out.println(cmd + "参数不能为空");
                 }
             }
+            case "undo" -> command = new UndoCommand(document);
+            case "redo" -> command = new RedoCommand(document);
             case "list" -> command = new ListCommand(document);
             case "list-tree" -> command = new ListTreeCommand(document);
             case "dir-tree" -> command = new DirTreeCommand(cmd_args,document);

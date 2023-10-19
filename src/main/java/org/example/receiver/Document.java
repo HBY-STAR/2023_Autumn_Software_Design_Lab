@@ -8,6 +8,8 @@ import java.util.*;
 public class Document {
     public static List<List<String>> doc_lines = new ArrayList<>();
     public static String file_path = null;
+    public static Stack<List<String>> edit_lines = new Stack<>();
+    public static boolean record_edit = true;
 
     public boolean load(String filePath) {
         try{
@@ -32,6 +34,10 @@ public class Document {
                         System.exit(-1);
                     }
                     file_path=check_file.getAbsolutePath();
+
+                    //清空栈
+                    edit_lines=new Stack<>();
+
                     return true;
                 }
                 //若父路径不为空但不为目录
@@ -46,6 +52,10 @@ public class Document {
                         System.exit(-1);
                     }
                     file_path=check_file.getAbsolutePath();
+
+                    //清空栈
+                    edit_lines=new Stack<>();
+
                     return true;
                 }
             }
@@ -58,6 +68,10 @@ public class Document {
                 doc_lines.add(add);
             }
             br.close();
+
+            //清空栈
+            edit_lines=new Stack<>();
+
             return true;
         }catch(Exception e){
             e.printStackTrace();
@@ -83,6 +97,10 @@ public class Document {
             bw.flush();
             bw.close();
             System.out.println("保存成功！");
+
+            //清空栈
+            edit_lines=new Stack<>();
+
             return true;
         }catch(Exception e){
             e.printStackTrace();
@@ -122,6 +140,12 @@ public class Document {
                     }
                     doc_lines.add(doc_lines.size(),text);
                 }
+
+                //记录编辑命令
+                if(record_edit){
+                    record_edit("insert",row, text);
+                }
+
                 return true;
             }
         }catch (Exception e) {
@@ -157,6 +181,12 @@ public class Document {
         }
         else {
             if(row-1<=doc_lines.size()){
+
+                //记录编辑命令
+                if(record_edit){
+                    record_edit("delete",row, doc_lines.get(row-1));
+                }
+                
                 doc_lines.remove(row-1);
                 return true;
             }
@@ -174,8 +204,15 @@ public class Document {
             int flag=0;
             for (int i=0;i<doc_lines.size();i++){
                if(doc_lines.get(i).get(1).equals(text.get(0))){
+
+                   //记录编辑命令
+                   if(record_edit){
+                       record_edit("delete",i+1, doc_lines.get(i));
+                   }
+
                    doc_lines.remove(doc_lines.get(i));
                    flag++;
+                   break;
                }
             }
             if(flag==0){
@@ -183,7 +220,6 @@ public class Document {
                 return false;
             }
             else{
-                System.out.println("共删除 "+flag+" 条语句");
                 return true;
             }
         }
@@ -345,4 +381,89 @@ public class Document {
         return 0;
     }
 
+    public boolean redo() {
+        if(edit_lines.size()>=1){
+            List<String> edit_line = edit_lines.lastElement();
+            if(edit_line.get(0).equals("undo")){
+                String cmd = edit_line.get(1);
+                int row = Integer.parseInt(edit_line.get(2));
+                List<String> text = new ArrayList<>();
+                text.add(edit_line.get(3));
+                text.add(edit_line.get(4));
+
+                record_edit=false;
+                if(cmd.equals("insert")){
+                    insert(row,text);
+                }else{
+                    delete_row(row);
+                }
+                record_edit=true;
+
+                edit_lines.pop();
+
+                return true;
+            }else {
+                System.out.println("redo的上一条指令只可为undo");
+                return false;
+            }
+        }else {
+            System.out.println("没有可重做的指令");
+            return false;
+        }
+    }
+
+    public boolean undo() {
+        if(edit_lines.size()>=1){
+            List<String> edit_line;
+            int skip = 1;
+            do{
+                edit_line = edit_lines.elementAt(edit_lines.size()-skip);
+                skip++;
+            }while (edit_line!=null && edit_line.get(0).equals("undo"));
+
+            if(edit_line!=null){
+                if(edit_line.size()==4){
+                    String cmd = edit_line.get(0);
+                    int row = Integer.parseInt(edit_line.get(1));
+                    List<String> text = new ArrayList<>();
+                    text.add(edit_line.get(2));
+                    text.add(edit_line.get(3));
+
+                    record_edit=false;
+                    if(cmd.equals("insert")){
+                        delete_row(row);
+                    }else{
+                        insert(row,text);
+                    }
+                    record_edit=true;
+
+                    List<String> undo_line = new ArrayList<>();
+                    undo_line.add("undo");
+                    undo_line.add(cmd);
+                    undo_line.add(Integer.toString(row));
+                    undo_line.add(text.get(0));
+                    undo_line.add(text.get(1));
+                    edit_lines.push(undo_line);
+
+                    return true;
+                }
+            }else {
+                System.out.println("没有可撤销的指令");
+                return false;
+            }
+        }else {
+            System.out.println("没有可撤销的指令");
+            return false;
+        }
+        return false;
+    }
+
+    private static void record_edit(String cmd,int row, List<String> text) {
+        List<String> edit_line = new ArrayList<>();
+        edit_line.add(cmd);
+        edit_line.add(Integer.toString(row));
+        edit_line.add(text.get(0));
+        edit_line.add(text.get(1));
+        edit_lines.push(edit_line);
+    }
 }
