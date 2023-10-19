@@ -74,7 +74,6 @@ public class Shell {
                 System.out.println("输入为空!");
             }
             System.out.print(">>>");
-
         }
         while (scanner.hasNextLine());
     }
