@@ -1,4 +1,4 @@
-package org.example;
+package org.example.TestCases;
 
 import org.example.command.Command;
 import org.example.command.ConcreteCommand.EditCommand.AppendHeadCommand;
@@ -16,24 +16,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Test
-public class TestCasesTest {
-    public  static Document document = new Document();
-
-//    load test1.md
-//    insert ## 程序设计
-//    append-head # 我的资源
-//    append-tail ### 软件设计
-//    append-tail #### 设计模式
-//    append-tail 1. 观察者模式
-//    append-tail 3. 单例模式
-//    insert 6 2. 策略模式
-//    delete 单例模式
-//    append-tail 3. 组合模式
-//    list-tree
-//    append-tail ## ⼯具箱
-//    append-tail ### Adobe
-//    list-tree
-//    save
+public class TestCase1 {
+    // Testcase1 基本编辑功能
+    //    load test1.md
+    //    insert ## 程序设计
+    //    append-head # 我的资源
+    //    append-tail ### 软件设计
+    //    append-tail #### 设计模式
+    //    append-tail 1. 观察者模式
+    //    append-tail 3. 单例模式
+    //    insert 6 2. 策略模式
+    //    delete 单例模式
+    //    append-tail 3. 组合模式
+    //    list-tree
+    //    append-tail ## ⼯具箱
+    //    append-tail ### Adobe
+    //    list-tree
+    //    save
     @Test
     public void test_case1() {
         Command command;

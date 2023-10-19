@@ -13,7 +13,6 @@ public class HistoryLog {
 
     public static LocalDateTime ses_start;
     public static LocalDateTime cmd_start;
-
     public static List<String> history_lines=new ArrayList<>();
 
     public void ses_start_log() throws IOException {
@@ -63,12 +62,15 @@ public class HistoryLog {
             } else{
                 BufferedReader br = new BufferedReader(new FileReader(file_path));
                 String s;
-                for (int i=0;i<num;i++){
-                    if((s = br.readLine())!=null){
-                        if(s.charAt(0)!='s'){
-                            System.out.println(s);
-                        }
+                // 使用readLine方法，一次读一行
+                while((s = br.readLine())!=null){
+                    if(s.charAt(0)!='s'){
+                        history_lines.add(s);
                     }
+                }
+                br.close();
+                for(int i=history_lines.size()-1;i>=history_lines.size()-num;i--){
+                    System.out.println(history_lines.get(i));
                 }
                 br.close();
                 return true;
@@ -86,10 +88,13 @@ public class HistoryLog {
             // 使用readLine方法，一次读一行
             while((s = br.readLine())!=null){
                 if(s.charAt(0)!='s'){
-                    System.out.println(s);
+                    history_lines.add(s);
                 }
             }
             br.close();
+            for(int i=history_lines.size()-1;i>=0;i--){
+                System.out.println(history_lines.get(i));
+            }
             return true;
         }catch (Exception e){
             e.printStackTrace();
